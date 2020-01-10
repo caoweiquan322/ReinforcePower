@@ -148,3 +148,54 @@ class SarsaLookup(Sarsa):
         flat_pi = np.argmax(flat_Q, axis=-1)
         optimal_action_tuple = np.unravel_index(flat_pi, self.action_shape)
         self.policy.update_pi_lookup_tuple(optimal_action_tuple)
+
+
+class SarsaMaxLookup(SarsaLookup):
+    def __init__(self, policy: LookupBasedPolicy, state_encode, state_shape,
+                 action_encode, action_shape, td_lambda=0.5, discount=1.0, explore_epsilon_N0=100):
+        super(SarsaMaxLookup, self).__init__(policy, state_encode, state_shape,
+                                             action_encode, action_shape, td_lambda,
+                                             discount, explore_epsilon_N0)
+
+    def do_feed_sarsa(self, s1, a1, r2, s2, a2, terminated):
+        """
+        :param s1:
+        :param a1:
+        :param r2:
+        :param s2:
+        :param a2:
+        :param terminated:
+        :return:
+        """
+        # Evaluation
+        s1_idx = self.state_encode(s1)
+        a1_idx = self.action_encode(a1)
+        sa1_idx = (*s1_idx, *a1_idx)
+        self.state_count[s1_idx] += 1
+        self.state_action_count[sa1_idx] += 1
+        s2_idx = self.state_encode(s2)
+        a2_idx = self.action_encode(a2)
+        # sarsaMax与sarsa的主要区别
+        if terminated or s2_idx is None:  # s2/a2 might be illegal during to term.
+            delta = r2 - self.Q[sa1_idx]
+        else:
+            #sa2_idx = (*s2_idx, *a2_idx)
+            delta = r2 + self.discount * self.Q[s2_idx].max() - self.Q[sa1_idx]
+        # 区别结束
+        self.eligibility[sa1_idx] += 1.0
+        learn_rate = (1.0 / self.state_action_count[sa1_idx])
+        self.Q += (learn_rate * delta) * self.eligibility
+        self.eligibility *= (self.discount * self.td_lambda)
+        # Improve policy
+        flat_Q = np.reshape(self.Q, (*self.state_shape, np.prod(self.action_shape)))
+        self.V = np.max(flat_Q, axis=-1)
+        # print('V.shape=' + str(self.V.shape))
+        # print('V=' + str(self.V))
+        flat_pi = np.argmax(flat_Q, axis=-1)
+        optimal_action_tuple = np.unravel_index(flat_pi, self.action_shape)
+        self.policy.update_pi_lookup_tuple(optimal_action_tuple)
+
+
+# Note that SarsaMaxLookup equals to QLearning in lookup mode.
+QLearningLookup = SarsaMaxLookup
+

@@ -10,7 +10,7 @@ from mpl_toolkits.mplot3d import axes3d
 from com.fatty.rl.policy import LookupBasedPolicy
 from easy21 import Easy21Env
 from com.fatty.rl.monte_carlo import MonteCarloLookup
-from com.fatty.rl.sarsa import SarsaLookup
+from com.fatty.rl.sarsa import SarsaLookup, QLearningLookup
 
 
 def state_encode(state):
@@ -39,14 +39,7 @@ class Easy21Policy(LookupBasedPolicy):
         super(Easy21Policy, self).__init__(state_encode, (21, 10), action_decode, (2,))
 
 
-if __name__ == '__main__':
-    # controller = MonteCarloLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
-    #                               discount=1, explore_epsilon_N0=100)
-    controller = SarsaLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
-                             td_lambda=0.9, discount=1, explore_epsilon_N0=100)
-    optimal_policy = controller.learn(Easy21Env(), num_rounds=500000, round_max_itr=0)  # Train for 100 rounds.
-    # Visualize the optimal value function.
-    optimal_v = controller.V
+def visualize_easy21_value(optimal_v):
     fig = plt.figure()
     ax3 = plt.axes(projection='3d')
     # 定义三维数据
@@ -57,15 +50,28 @@ if __name__ == '__main__':
     row, col = X.shape
     for i in range(row):
         for j in range(col):
-            s_idx = state_encode((X[i,j], Y[i,j]))
+            s_idx = state_encode((X[i, j], Y[i, j]))
             Z[i, j] = optimal_v[s_idx]
     # 作图
     ax3.plot_surface(X, Y, Z, cmap='rainbow')
     plt.show()
+
+
+if __name__ == '__main__':
+    # controller = MonteCarloLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
+    #                               discount=1, explore_epsilon_N0=100)
+    controller = SarsaLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
+                             td_lambda=0.9, discount=1, explore_epsilon_N0=100)
+    controller = QLearningLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
+                                 td_lambda=1.0, discount=1, explore_epsilon_N0=100)
+    optimal_policy = controller.learn(Easy21Env(), num_rounds=200000, round_max_itr=0)
+    # Visualize the optimal value function.
+    visualize_easy21_value(controller.V)
     # Test it!
     env = Easy21Env()
     num_won = 0
-    for i in range(100):
+    num_lose = 0
+    for i in range(10000):
         (reward, state, is_term) = env.run(optimal_policy, need_reset=True, max_itr=0)
         # print('********************************')
         # print('Your card: %d' % state[0])
@@ -74,10 +80,10 @@ if __name__ == '__main__':
             num_won += 1
             # print('You won!')
         elif reward < 0:
-            pass
+            num_lose += 1
             # print('You lose!')
         else:
             pass
             # print('We draw!')
     print('================================')
-    print('Won rate: %d/%d' % (num_won, 100))
+    print('Won rate: %d <-> %d' % (num_won, num_lose))
