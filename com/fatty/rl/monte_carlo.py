@@ -90,11 +90,11 @@ class MonteCarloLookup(MonteCarlo):
         super(MonteCarloLookup, self).__init__(policy, discount, learn_rate=0.5, greedy_epsilon=0.01)
         if state_encode is None:
             raise RuntimeError('must provide a convert method from state to state space indices')
-        if state_shape is None or not state_shape is tuple:
+        if state_shape is None or not isinstance(state_shape, tuple):
             raise ValueError('state_shape must be tuple giving shape of the state space')
         if action_encode is None:
             raise RuntimeError('must provide a convert method from action to action space indices')
-        if action_shape is None or not action_shape is tuple:
+        if action_shape is None or not isinstance(action_shape, tuple):
             raise ValueError('action_shape must be tuple giving shape of the action space')
         self.explore_epsilon_N0 = explore_epsilon_N0
         # State/Action space conversion.
@@ -103,8 +103,8 @@ class MonteCarloLookup(MonteCarlo):
         self.action_encode = action_encode
         self.action_shape = action_shape
         # Statistics for MonteCarlo
-        self.state_count = np.ndarray(state_shape, np.int)
-        self.state_action_count = np.ndarray(action_shape, np.int)
+        self.state_count = np.zeros(state_shape, np.int)
+        self.state_action_count = np.zeros((*state_shape, *action_shape), np.int)
         self.Q = np.zeros((*state_shape, *action_shape), np.float)
         self.V = np.zeros(state_shape, np.float)
 
@@ -119,30 +119,34 @@ class MonteCarloLookup(MonteCarlo):
         num_actions = len(actions)
         Gt = np.zeros((num_actions,), np.float)
         Gt[num_actions-1] = rewards[num_actions]
+        # print('Rewards: ' + str(rewards))
+        # print('States: ' + str(states))
+        # print('Actions: ' + str(actions))
         for i in range(num_actions-2, -1, -1):
             Gt[i] = rewards[i+1] + self.discount * Gt[i+1]
+        # print('Gt: ' + str(Gt))
         # Evaluation
         for i in range(num_actions):
             s_idx = self.state_encode(states[i])
             a_idx = self.action_encode(actions[i])
+            # print('s_idx: ' + str(s_idx))
+            # print('a_idx: ' + str(a_idx))
             sa_idx = (*s_idx, *a_idx)
+            # print('sa_idx: ' + str(sa_idx))
             if s_idx is None or a_idx is None:
+                # Maybe invalid states that could not be encoded.
                 continue
             # State count
             self.state_count[s_idx] += 1
             # State-Action count
             self.state_action_count[sa_idx] += 1
             # Q function
-            self.Q[sa_idx] = self.Q[sa_idx] + (1.0/self.state_action_count[sa_idx])*(Gt[i]-self.Q[sa_idx])
+            self.Q[sa_idx] += (1.0 / self.state_action_count[sa_idx]) * (Gt[i] - self.Q[sa_idx])
         # Improve policy
-        a_axis = tuple(range(len(s_idx), len(sa_idx)))
-        self.V = np.max(self.Q, axis=a_axis)
         flat_Q = np.reshape(self.Q, (*self.state_shape, np.prod(self.action_shape)))
+        self.V = np.max(flat_Q, axis=-1)
+        # print('V.shape=' + str(self.V.shape))
+        # print('V=' + str(self.V))
         flat_pi = np.argmax(flat_Q, axis=-1)
-        pi = np.unravel_index(flat_pi, self.action_shape)
-        np.unravel_index()
-        self.policy.update(np.argmax(self.Q, axis=a_axis))
-        for s in self.Q:
-            max_action = max(self.Q[s], key=self.Q[s].get)
-            self.policy.update_pi(s, max_action)
-            self.V[s] = self.Q[s][max_action]
+        optimal_action_tuple = np.unravel_index(flat_pi, self.action_shape)
+        self.policy.update_pi_lookup_tuple(optimal_action_tuple)
