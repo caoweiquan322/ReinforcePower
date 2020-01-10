@@ -10,6 +10,7 @@ from mpl_toolkits.mplot3d import axes3d
 from com.fatty.rl.policy import LookupBasedPolicy
 from easy21 import Easy21Env
 from com.fatty.rl.monte_carlo import MonteCarloLookup
+from com.fatty.rl.sarsa import SarsaLookup
 
 
 def state_encode(state):
@@ -39,9 +40,11 @@ class Easy21Policy(LookupBasedPolicy):
 
 
 if __name__ == '__main__':
-    controller = MonteCarloLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
-                                  discount=1, explore_epsilon_N0=100)
-    optimal_policy = controller.learn(Easy21Env(), num_rounds=200000, round_max_itr=0)  # Train for 100 rounds.
+    # controller = MonteCarloLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
+    #                               discount=1, explore_epsilon_N0=100)
+    controller = SarsaLookup(Easy21Policy(), state_encode, (21, 10), action_encode, (2,),
+                             td_lambda=0.9, discount=1, explore_epsilon_N0=100)
+    optimal_policy = controller.learn(Easy21Env(), num_rounds=500000, round_max_itr=0)  # Train for 100 rounds.
     # Visualize the optimal value function.
     optimal_v = controller.V
     fig = plt.figure()

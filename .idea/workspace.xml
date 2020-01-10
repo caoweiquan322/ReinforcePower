@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c89b7b20-7f8f-4493-8317-ef65d8d8393b" name="Default Changelist" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Easy21.iml" afterPath="$PROJECT_DIR$/.idea/Easy21.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com/fatty/rl/monte_carlo.py" afterPath="$PROJECT_DIR$/com/fatty/rl/monte_carlo.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com/fatty/rl/policy.py" afterPath="$PROJECT_DIR$/com/fatty/rl/policy.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com/fatty/rl/sarsa.py" afterPath="$PROJECT_DIR$/com/fatty/rl/sarsa.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/easy21.py" afterPath="$PROJECT_DIR$/easy21.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/easy21_solver.py" afterPath="$PROJECT_DIR$/easy21_solver.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,8 +28,8 @@
       <file leaf-file-name="easy21.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/easy21.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+            <state relative-caret-position="690">
+              <caret line="68" column="22" selection-start-line="68" selection-start-column="22" selection-end-line="68" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -41,8 +38,8 @@
       <file leaf-file-name="policy.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/com/fatty/rl/policy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="46" column="32" selection-start-line="46" selection-start-column="32" selection-end-line="46" selection-end-column="32" />
+            <state relative-caret-position="-258">
+              <caret line="17" column="8" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
               <folding>
                 <element signature="e#72#85#0" expanded="true" />
               </folding>
@@ -53,8 +50,8 @@
       <file leaf-file-name="control.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/com/fatty/rl/control.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+            <state relative-caret-position="390">
+              <caret line="27" column="27" selection-start-line="27" selection-start-column="27" selection-end-line="27" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -63,8 +60,8 @@
       <file leaf-file-name="monte_carlo.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/com/fatty/rl/monte_carlo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="148" column="18" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="18" />
+            <state relative-caret-position="120">
+              <caret line="84" column="21" selection-start-line="84" selection-start-column="18" selection-end-line="84" selection-end-column="21" />
               <folding>
                 <element signature="e#72#90#0" expanded="true" />
               </folding>
@@ -75,15 +72,10 @@
       <file leaf-file-name="sarsa.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/com/fatty/rl/sarsa.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1110">
-              <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
+            <state relative-caret-position="135">
+              <caret line="82" column="56" selection-start-line="82" selection-start-column="46" selection-end-line="82" selection-end-column="56" />
               <folding>
                 <element signature="e#72#90#0" expanded="true" />
-                <marker date="1578673210000" expanded="true" signature="268:568" ph="..." />
-                <marker date="1578673210000" expanded="true" signature="299:372" ph="..." />
-                <marker date="1578673210000" expanded="true" signature="1332:1375" ph="..." />
-                <marker date="1578673210000" expanded="true" signature="2217:2796" ph="..." />
-                <marker date="1578673210000" expanded="true" signature="2337:2408" ph="..." />
               </folding>
             </state>
           </provider>
@@ -92,9 +84,11 @@
       <file leaf-file-name="easy21_solver.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/easy21_solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="54" column="24" selection-start-line="54" selection-start-column="24" selection-end-line="54" selection-end-column="24" />
-              <folding />
+            <state relative-caret-position="159">
+              <caret line="46" column="63" selection-start-line="46" selection-start-column="63" selection-end-line="46" selection-end-column="63" />
+              <folding>
+                <element signature="e#72#103#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -123,10 +117,10 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/com/fatty/rl/environment.py" />
         <option value="$PROJECT_DIR$/com/fatty/rl/control.py" />
-        <option value="$PROJECT_DIR$/easy21.py" />
-        <option value="$PROJECT_DIR$/com/fatty/rl/sarsa.py" />
         <option value="$PROJECT_DIR$/com/fatty/rl/policy.py" />
+        <option value="$PROJECT_DIR$/com/fatty/rl/sarsa.py" />
         <option value="$PROJECT_DIR$/com/fatty/rl/monte_carlo.py" />
+        <option value="$PROJECT_DIR$/easy21.py" />
         <option value="$PROJECT_DIR$/easy21_solver.py" />
       </list>
     </option>
@@ -555,11 +549,6 @@
           <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
           <folding>
             <element signature="e#72#90#0" expanded="true" />
-            <marker date="1578673210000" expanded="true" signature="268:568" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="299:372" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="1332:1375" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="2217:2796" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="2337:2408" ph="..." />
           </folding>
         </state>
       </provider>
@@ -568,7 +557,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
-          <folding />
+          <folding>
+            <element signature="e#72#103#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -594,34 +585,27 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/-1247971763/builtins.py" />
-    <entry file="file://$PROJECT_DIR$/com/fatty/rl/sarsa.py">
+    <entry file="file://$USER_HOME$/.local/lib/python3.6/site-packages/numpy/core/multiarray.py" />
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2016.1/python_stubs/1821643254/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1110">
-          <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
-          <folding>
-            <element signature="e#72#90#0" expanded="true" />
-            <marker date="1578673210000" expanded="true" signature="268:568" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="299:372" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="1332:1375" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="2217:2796" ph="..." />
-            <marker date="1578673210000" expanded="true" signature="2337:2408" ph="..." />
-          </folding>
+        <state relative-caret-position="9">
+          <caret line="2997" column="6" selection-start-line="2997" selection-start-column="6" selection-end-line="2997" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.local/lib/python3.6/site-packages/numpy/core/multiarray.py" />
     <entry file="file://$PROJECT_DIR$/com/fatty/rl/control.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+        <state relative-caret-position="390">
+          <caret line="27" column="27" selection-start-line="27" selection-start-column="27" selection-end-line="27" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/com/fatty/rl/policy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="46" column="32" selection-start-line="46" selection-start-column="32" selection-end-line="46" selection-end-column="32" />
+        <state relative-caret-position="-258">
+          <caret line="17" column="8" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
           <folding>
             <element signature="e#72#85#0" expanded="true" />
           </folding>
@@ -630,16 +614,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/easy21.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        <state relative-caret-position="690">
+          <caret line="68" column="22" selection-start-line="68" selection-start-column="22" selection-end-line="68" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/com/fatty/rl/monte_carlo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="148" column="18" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="18" />
+        <state relative-caret-position="120">
+          <caret line="84" column="21" selection-start-line="84" selection-start-column="18" selection-end-line="84" selection-end-column="21" />
+          <folding>
+            <element signature="e#72#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/com/fatty/rl/sarsa.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="82" column="56" selection-start-line="82" selection-start-column="46" selection-end-line="82" selection-end-column="56" />
           <folding>
             <element signature="e#72#90#0" expanded="true" />
           </folding>
@@ -648,9 +642,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/easy21_solver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="54" column="24" selection-start-line="54" selection-start-column="24" selection-end-line="54" selection-end-column="24" />
-          <folding />
+        <state relative-caret-position="159">
+          <caret line="46" column="63" selection-start-line="46" selection-start-column="63" selection-end-line="46" selection-end-column="63" />
+          <folding>
+            <element signature="e#72#103#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -105,15 +105,14 @@ class MonteCarloLookup(MonteCarlo):
         # Statistics for MonteCarlo
         self.state_count = np.zeros(state_shape, np.int)
         self.state_action_count = np.zeros((*state_shape, *action_shape), np.int)
-        self.Q = np.zeros((*state_shape, *action_shape), np.float)
-        self.V = np.zeros(state_shape, np.float)
+        self.Q = np.zeros((*state_shape, *action_shape), np.float64)
+        self.V = np.zeros(state_shape, np.float64)
 
     def get_action(self, state):
         idx = self.state_encode(state)  # In case of invalid state, such as term state.
-        if idx is not None:
-            n = self.state_count[idx]
-            # explore_epsilon = self.explore_epsilon_N0/(self.explore_epsilon_N0+n)
-            return self.policy.get_action(state, self.explore_epsilon_N0/(self.explore_epsilon_N0+n))
+        n = 0.0 if idx is None else self.state_count[idx]
+        # explore_epsilon = self.explore_epsilon_N0/(self.explore_epsilon_N0+n)
+        return self.policy.get_action(state, self.explore_epsilon_N0 / (self.explore_epsilon_N0 + n))
 
     def do_feed_episode(self, rewards, states, actions):
         num_actions = len(actions)

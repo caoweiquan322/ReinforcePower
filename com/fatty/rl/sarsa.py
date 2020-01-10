@@ -24,25 +24,27 @@ class Sarsa(Controller):
     def clear_eligibility(self):
         raise RuntimeError('You should implement your own clear_eligibility')
 
-    def feed_sars(self, s1, a1, r2, s2):
+    def feed_sars(self, s1, a1, r2, s2, terminated):
         """
         :param s1:
         :param a1:
         :param r2:
         :param s2:
+        :param terminated:
         :return:
         """
-        a2 = self.get_action(s2)
-        self.do_feed_sarsa(s1, a1, r2, s2, a2)
+        a2 = None if terminated else self.get_action(s2)
+        self.do_feed_sarsa(s1, a1, r2, s2, a2, terminated)
         return a2
 
-    def do_feed_sarsa(self, s1, a1, r2, s2, a2):
+    def do_feed_sarsa(self, s1, a1, r2, s2, a2, terminated):
         """
         :param s1:
         :param a1:
         :param r2:
         :param s2:
         :param a2:
+        :param terminated:
         :return:
         """
         raise RuntimeError('You should implement %s yourself' % 'do_feed_episode')
@@ -64,10 +66,10 @@ class Sarsa(Controller):
                 action = next_action
                 s1 = state
                 (reward, state, term) = env.step(action)
+                # Feed sars sequence we generated!
+                next_action = self.feed_sars(s1, action, reward, state, term)
                 if term:
                     break
-                # Feed sars sequence we generated!
-                next_action = self.feed_sars(s1, action, reward, state)
                 itr += 1
             self.clear_eligibility()
         return self.policy
@@ -77,71 +79,72 @@ class SarsaLookup(Sarsa):
     """
     Assume states and actions are both list(tuple) of integers(strings).
     """
-    def __init__(self, policy: LookupBasedPolicy, td_lambda=0.5, discount=1.0, explore_epsilon_N0=100):
+    def __init__(self, policy: LookupBasedPolicy, state_encode, state_shape,
+                 action_encode, action_shape, td_lambda=0.5, discount=1.0, explore_epsilon_N0=100):
         # The learn_rate and greedy_epsilon actually make no sense for Lookup problems!
         super(SarsaLookup, self).__init__(policy, td_lambda, discount, learn_rate=0.5, greedy_epsilon=0.01)
+        if state_encode is None:
+            raise RuntimeError('must provide a convert method from state to state space indices')
+        if state_shape is None or not isinstance(state_shape, tuple):
+            raise ValueError('state_shape must be tuple giving shape of the state space')
+        if action_encode is None:
+            raise RuntimeError('must provide a convert method from action to action space indices')
+        if action_shape is None or not isinstance(action_shape, tuple):
+            raise ValueError('action_shape must be tuple giving shape of the action space')
         self.explore_epsilon_N0 = explore_epsilon_N0
-        self.state_count = {}
-        self.state_action_count = {}
-        self.Q = {}
-        self.V = {}
-        self.eligibility = {}
+        # State/Action space conversion.
+        self.state_encode = state_encode
+        self.state_shape = state_shape
+        self.action_encode = action_encode
+        self.action_shape = action_shape
+        # Statistics for Sarsa
+        self.state_count = np.zeros(state_shape, np.int)
+        self.state_action_count = np.zeros((*state_shape, *action_shape), np.int)
+        self.Q = np.zeros((*state_shape, *action_shape), np.float64)
+        self.V = np.zeros(state_shape, np.float64)
+        self.eligibility = np.zeros((*state_shape, *action_shape), np.float64)
 
     def get_action(self, state):
-        #state = tuple(state)
-        n = (state in self.state_count) and self.state_count[state] or 0
+        idx = self.state_encode(state)  # In case of invalid state, such as term state.
+        n = 0.0 if idx is None else self.state_count[idx]
         # explore_epsilon = self.explore_epsilon_N0/(self.explore_epsilon_N0+n)
-        return self.policy.get_action(state, self.explore_epsilon_N0/(self.explore_epsilon_N0+n))
-
-    def _initialize_s_table(self, tbl, s):
-        if s not in tbl:
-            tbl[s] = 0
-
-    def _initialize_sa_table(self, tbl, s, a):
-        if s not in tbl:
-            tbl[s] = {}
-        if a not in tbl[s]:
-            tbl[s][a] = 0.0
-
-    def decay_eligibility(self):
-        for s in self.eligibility:
-            for a in self.eligibility[s]:
-                self.eligibility[s][a] *= self.td_lambda
+        return self.policy.get_action(state, self.explore_epsilon_N0 / (self.explore_epsilon_N0 + n))
 
     def clear_eligibility(self):
-        for s in self.eligibility:
-            for a in self.eligibility[s]:
-                self.eligibility[s][a] = 0
+        self.eligibility *= 0
 
-    def do_feed_sarsa(self, s1, a1, r2, s2, a2):
+    def do_feed_sarsa(self, s1, a1, r2, s2, a2, terminated):
         """
         :param s1:
         :param a1:
         :param r2:
         :param s2:
         :param a2:
+        :param terminated:
         :return:
         """
         # Evaluation
-        self._initialize_s_table(self.state_count, s1)
-        self._initialize_s_table(self.state_count, s2)
-        self._initialize_s_table(self.V, s1)
-        self._initialize_s_table(self.V, s2)
-        self._initialize_sa_table(self.state_action_count, s1, a1)
-        self._initialize_sa_table(self.state_action_count, s2, a2)
-        self._initialize_sa_table(self.Q, s1, a1)
-        self._initialize_sa_table(self.Q, s2, a2)
-        self._initialize_sa_table(self.eligibility, s1, a1)
-        self.decay_eligibility()
-
-        self.state_count[s1] += 1
-        self.state_action_count[s1][a1] += 1
-        self.eligibility[s1][a1] += 1
-        learn_rate = (1.0/self.state_action_count[s1][a1])
-        delta = r2+self.discount*self.Q[s2][a2]-self.Q[s1][a1]
-        self.Q[s1][a1] = self.Q[s1][a1] + learn_rate*delta*self.eligibility[s1][a1]
+        s1_idx = self.state_encode(s1)
+        a1_idx = self.action_encode(a1)
+        sa1_idx = (*s1_idx, *a1_idx)
+        self.state_count[s1_idx] += 1
+        self.state_action_count[sa1_idx] += 1
+        s2_idx = self.state_encode(s2)
+        a2_idx = self.action_encode(a2)
+        if terminated or s2_idx is None or a2_idx is None:  # s2/a2 might be illegal during to term.
+            delta = r2 - self.Q[sa1_idx]
+        else:
+            sa2_idx = (*s2_idx, *a2_idx)
+            delta = r2 + self.discount * self.Q[sa2_idx] - self.Q[sa1_idx]
+        self.eligibility[sa1_idx] += 1.0
+        learn_rate = (1.0 / self.state_action_count[sa1_idx])
+        self.Q += (learn_rate * delta) * self.eligibility
+        self.eligibility *= (self.discount * self.td_lambda)
         # Improve policy
-        for s in self.Q:
-            max_action = max(self.Q[s], key=self.Q[s].get)
-            self.policy.update_pi(s, max_action)
-            self.V[s] = self.Q[s][max_action]
+        flat_Q = np.reshape(self.Q, (*self.state_shape, np.prod(self.action_shape)))
+        self.V = np.max(flat_Q, axis=-1)
+        # print('V.shape=' + str(self.V.shape))
+        # print('V=' + str(self.V))
+        flat_pi = np.argmax(flat_Q, axis=-1)
+        optimal_action_tuple = np.unravel_index(flat_pi, self.action_shape)
+        self.policy.update_pi_lookup_tuple(optimal_action_tuple)

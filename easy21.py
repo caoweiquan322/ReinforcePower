@@ -66,7 +66,7 @@ class Easy21Env(Environment):
         # Draw a red card or a black card
         card = random.randint(1, 10)
         is_red = random.random() < 1.0/3.0
-        return is_red and (-card) or card
+        return (-card) if is_red else card
 
     @staticmethod
     def is_bust(points):
